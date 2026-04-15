@@ -23,14 +23,14 @@ PKG_DIR = contents
 build:
 	@echo "Building Numbis ($(MODE) Mode)..."
 	npm run build
-	@# Generate metadata ONLY inside the contents/ directory
-	@cp $(METADATA_SRC) $(PKG_DIR)/metadata.json
-	@echo "Metadata generated at $(PKG_DIR)/metadata.json"
+	@# Generate metadata at the root
+	@cp $(METADATA_SRC) metadata.json
+	@echo "Metadata generated at metadata.json"
 
-# Install the script using the contents/ directory as the package root
+# Install the script using the current directory as the package root
 install: build
-	@echo "Installing $(NAME) ($(MODE)) from ./$(PKG_DIR)..."
-	kpackagetool6 --type=KWin/Script -i $(PKG_DIR)
+	@echo "Installing $(NAME) ($(MODE)) from ./..."
+	kpackagetool6 --type=KWin/Script -i .
 
 # Uninstall the script (uses the ID, so directory doesn't matter)
 uninstall:
@@ -49,7 +49,7 @@ uninstall-all:
 	@echo "Cleaning KWin configuration cache..."
 	-kbuildsycoca6 --noincremental
 
-# Reload logic: Clean uninstall -> Install from contents/ -> Load & Run
+# Reload logic: Clean uninstall -> Install from . -> Load & Run
 reload: build
 	@echo "--- REFRESHING NUMBIS ($(MODE)) ---"
 	@# 1. Unload and Uninstall existing
@@ -57,8 +57,8 @@ reload: build
 	-qdbus6 org.kde.KWin /Scripting unloadScript $(NAME)
 	-kpackagetool6 --type=KWin/Script -r $(NAME)
 	@# 2. Install fresh from the package directory
-	@echo "Installing fresh package from ./$(PKG_DIR)..."
-	kpackagetool6 --type=KWin/Script -i $(PKG_DIR)
+	@echo "Installing fresh package from ./..."
+	kpackagetool6 --type=KWin/Script -i .
 	@# 3. Load and Run in KWin session
 	@echo "Loading $(NAME) into KWin session..."
 	-qdbus6 org.kde.KWin /Scripting reconfigure
@@ -72,6 +72,6 @@ logs:
 	journalctl -b 0 --user-unit=plasma-kwin_wayland.service -f | grep -i "NUMBIS"
 
 clean:
-	rm -f $(PKG_DIR)/*.js
-	rm -f $(PKG_DIR)/metadata.json
-	rm -rf $(PKG_DIR)/code
+	rm -f contents/code/*.js
+	rm -f metadata.json
+	rm -rf contents/code/main.js
