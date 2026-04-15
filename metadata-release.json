@@ -17,5 +17,5 @@
     },
     "X-KWin-Video-Wall": false,
     "X-Plasma-API": "javascript",
-    "X-Plasma-MainScript": "numbis.js"
+    "X-Plasma-MainScript": "code/main.js"
 }
