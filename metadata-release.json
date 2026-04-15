@@ -3,16 +3,16 @@
     "KPlugin": {
         "Authors": [
             {
-                "Email": "user@example.com",
-                "Name": "Numbis Developer"
+                "Email": "81469656+amatsagu@users.noreply.github.com",
+                "Name": "Amatsagu"
             }
         ],
-        "Description": "Numbis (Development) - A tiling window manager script for KWin (Plasma 6).",
+        "Description": "Numbis - A tiling window manager script for KWin (Plasma 6).",
         "Icon": "preferences-system-windows-move",
-        "Id": "numbis-dev",
+        "Id": "numbis",
         "License": "GPLv3",
-        "Name": "Numbis (Development)",
-        "Version": "0.1.0-dev",
+        "Name": "Numbis",
+        "Version": "0.1.0",
         "EnabledByDefault": true
     },
     "X-KWin-Video-Wall": false,

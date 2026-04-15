@@ -1,55 +1,68 @@
 # Makefile for Numbis - KWin Script Development
 
 # --- CONFIGURATION ---
-NAME_DEV = numbis-dev
-NAME = numbis
-BUILD_DIR = contents/src
+# Set NUMBIS_RELEASE=true for production build
+NUMBIS_RELEASE ?= false
+
+ifeq ($(NUMBIS_RELEASE),true)
+    NAME = numbis
+    METADATA_SRC = metadata-release.json
+    MODE = RELEASE
+else
+    NAME = numbis-dev
+    METADATA_SRC = metadata-dev.json
+    MODE = DEVELOPMENT
+endif
+
+# The self-contained package directory
+PKG_DIR = contents
 
 .PHONY: build install uninstall reload clean logs uninstall-all
 
 # Build the TypeScript project
 build:
-	@echo "Building Numbis (CommonJS Bundle)..."
+	@echo "Building Numbis ($(MODE) Mode)..."
 	npm run build
+	@# Generate metadata ONLY inside the contents/ directory
+	@cp $(METADATA_SRC) $(PKG_DIR)/metadata.json
+	@echo "Metadata generated at $(PKG_DIR)/metadata.json"
 
-# Install as DEVELOPMENT version
+# Install the script using the contents/ directory as the package root
 install: build
-	@echo "Installing $(NAME_DEV)..."
-	@cp metadata-dev.json metadata.json
-	kpackagetool6 --type=KWin/Script -i .
+	@echo "Installing $(NAME) ($(MODE)) from ./$(PKG_DIR)..."
+	kpackagetool6 --type=KWin/Script -i $(PKG_DIR)
 
-# Uninstall DEVELOPMENT version
+# Uninstall the script (uses the ID, so directory doesn't matter)
 uninstall:
-	@echo "Uninstalling $(NAME_DEV)..."
-	-qdbus6 org.kde.KWin /Scripting unloadScript $(NAME_DEV)
-	-kpackagetool6 --type=KWin/Script -r $(NAME_DEV)
-	@# Backup cleanup just in case
-	-rm -rf $(HOME)/.local/share/kwin/scripts/$(NAME_DEV)
+	@echo "Uninstalling $(NAME)..."
+	-qdbus6 org.kde.KWin /Scripting unloadScript $(NAME)
+	-kpackagetool6 --type=KWin/Script -r $(NAME)
 
-# Deep clean of any Numbis scripts
+# Deep clean of any Numbis scripts and cache
 uninstall-all:
 	@echo "Uninstalling all Numbis versions..."
-	-qdbus6 org.kde.KWin /Scripting unloadScript $(NAME_DEV)
-	-qdbus6 org.kde.KWin /Scripting unloadScript $(NAME_REL)
-	-kpackagetool6 --type=KWin/Script -r $(NAME_DEV)
-	-kpackagetool6 --type=KWin/Script -r $(NAME_REL)
+	-qdbus6 org.kde.KWin /Scripting unloadScript numbis
+	-qdbus6 org.kde.KWin /Scripting unloadScript numbis-dev
+	-kpackagetool6 --type=KWin/Script -r numbis
+	-kpackagetool6 --type=KWin/Script -r numbis-dev
 	-rm -rf $(HOME)/.local/share/kwin/scripts/numbis*
 	@echo "Cleaning KWin configuration cache..."
 	-kbuildsycoca6 --noincremental
 
-# Reload logic: uninstall old -> install new -> dbus run
+# Reload logic: Clean uninstall -> Install from contents/ -> Load & Run
 reload: build
-	@echo "--- REFRESHING NUMBIS DEVELOPMENT ---"
-	@# 1. Ensure clean slate
-	-qdbus6 org.kde.KWin /Scripting unloadScript $(NAME_DEV)
-	-kpackagetool6 --type=KWin/Script -r $(NAME_DEV)
-	@# 2. Build metadata
-	@cp metadata-dev.json metadata.json
-	@# 3. Install
-	kpackagetool6 --type=KWin/Script -i .
-	@# 4. Reload into KWin session
-	@echo "Loading into KWin session..."
-	@ID=$$(qdbus6 org.kde.KWin /Scripting loadScript "$$(pwd)/contents/src/main.js" $(NAME_DEV)); \
+	@echo "--- REFRESHING NUMBIS ($(MODE)) ---"
+	@# 1. Unload and Uninstall existing
+	@echo "Cleaning old instance..."
+	-qdbus6 org.kde.KWin /Scripting unloadScript $(NAME)
+	-kpackagetool6 --type=KWin/Script -r $(NAME)
+	@# 2. Install fresh from the package directory
+	@echo "Installing fresh package from ./$(PKG_DIR)..."
+	kpackagetool6 --type=KWin/Script -i $(PKG_DIR)
+	@# 3. Load and Run in KWin session
+	@echo "Loading $(NAME) into KWin session..."
+	-qdbus6 org.kde.KWin /Scripting reconfigure
+	@ID=$$(qdbus6 org.kde.KWin /Scripting loadScript $(NAME)); \
 	echo "Script ID: $$ID"; \
 	qdbus6 org.kde.KWin /Scripting/Script$$ID run
 	@echo "--- DONE ---"
@@ -59,5 +72,6 @@ logs:
 	journalctl -b 0 --user-unit=plasma-kwin_wayland.service -f | grep -i "NUMBIS"
 
 clean:
-	rm -rf $(BUILD_DIR)/*.js
-	rm -f metadata.json
+	rm -f $(PKG_DIR)/*.js
+	rm -f $(PKG_DIR)/metadata.json
+	rm -rf $(PKG_DIR)/code

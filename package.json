@@ -2,12 +2,12 @@
   "name": "numbis",
   "version": "0.1.0",
   "description": "A tiling window manager script for KWin (Plasma 6).",
-  "main": "contents/src/main.js",
+  "main": "contents/numbis.js",
   "scripts": {
-    "build": "esbuild src/main.ts --bundle --outfile=contents/src/main.js --format=cjs --platform=neutral --external:kwin-api",
+    "build": "esbuild src/main.ts --bundle --outfile=contents/numbis.js --format=cjs --platform=neutral --external:kwin-api",
     "watch": "npm run build -- --watch",
-    "install-script": "kpackagetool6 --type=KWin/Script -i .",
-    "upgrade-script": "kpackagetool6 --type=KWin/Script -u .",
+    "install-script": "kpackagetool6 --type=KWin/Script -i contents/",
+    "upgrade-script": "kpackagetool6 --type=KWin/Script -u contents/",
     "uninstall-script": "kpackagetool6 --type=KWin/Script -r numbis",
     "test-reload": "busctl --user call org.kde.KWin /Scripting org.kde.kwin.Scripting unloadScript string:numbis && busctl --user call org.kde.KWin /Scripting org.kde.kwin.Scripting loadScript string:numbis"
   },
