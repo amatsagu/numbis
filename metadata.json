@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "KWin/Script",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "81469656+amatsagu@users.noreply.github.com",
+                "Name": "Amatsagu"
+            }
+        ],
+        "Description": "Numbis - A tiling window manager script for KWin (Plasma 6).",
+        "Icon": "preferences-system-windows-move",
+        "Id": "numbis",
+        "License": "GPLv3",
+        "Name": "Numbis (Development)",
+        "Version": "0.0.1",
+        "EnabledByDefault": true
+    },
+    "X-KWin-Video-Wall": false,
+    "X-Plasma-API": "javascript",
+    "X-Plasma-MainScript": "code/main.js"
+}

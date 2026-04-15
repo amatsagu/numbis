@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "contents/code",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*"]
+    },
+    "types": ["kwin-api"]
+  },
+  "include": ["src/**/*.ts"]
+}
