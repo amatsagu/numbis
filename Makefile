@@ -69,7 +69,7 @@ reload: build
 
 # View KWin logs for Numbis
 logs:
-	journalctl -b 0 --user-unit=plasma-kwin_wayland.service -f | grep -i "NUMBIS"
+	journalctl -f QT_CATEGORY=js QT_CATEGORY=kwin_scripting
 
 clean:
 	rm -f contents/code/*.js

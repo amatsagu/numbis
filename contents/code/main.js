@@ -45,13 +45,13 @@ function getManagedWindows() {
 // src/config.ts
 var Config = class {
   static get isEnabled() {
-    return KWin.readConfig(CONFIG_KEYS.ENABLED, true);
+    return readConfig(CONFIG_KEYS.ENABLED, true);
   }
   static get gaps() {
-    return KWin.readConfig(CONFIG_KEYS.GAPS, 10);
+    return readConfig(CONFIG_KEYS.GAPS, 10);
   }
   static get hideTitleBars() {
-    return KWin.readConfig(CONFIG_KEYS.HIDE_TITLEBARS, true);
+    return readConfig(CONFIG_KEYS.HIDE_TITLEBARS, true);
   }
 };
 

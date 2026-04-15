@@ -60,6 +60,11 @@ declare global {
     function registerShortcut(name: string, text: string, keySequence: string, callback: () => void): void;
 
     /**
+     * Reads value from ~/.config/kwinrc. Will return defaultValue if not found.
+     */
+    function readConfig<T>(property: string, defaultValue: T): T;
+
+    /**
      * Calls a DBus method.
      */
     function callDBus(service: string, path: string, interfaceName: string, method: string, ...args: any[]): void;

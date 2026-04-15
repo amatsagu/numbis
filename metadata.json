@@ -7,7 +7,7 @@
                 "Name": "Numbis Developer"
             }
         ],
-        "Description": "Numbis (Development) - A tiling window manager script for KWin (Plasma 6).",
+        "Description": "Numbis - A tiling window manager script for KWin (Plasma 6).",
         "Icon": "preferences-system-windows-move",
         "Id": "numbis-dev",
         "License": "GPLv3",
