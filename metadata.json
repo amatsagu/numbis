@@ -11,7 +11,7 @@
         "Icon": "preferences-system-windows-move",
         "Id": "numbis",
         "License": "GPLv3",
-        "Name": "Numbis (Development)",
+        "Name": "Numbis",
         "Version": "0.0.1",
         "EnabledByDefault": true
     },
