@@ -1,21 +1,15 @@
-import { LOG_PREFIX } from "./constants";
-
-export function log(msg: string) {
-    print(LOG_PREFIX + msg);
-}
-
-export function debug(msg: string) {
-    print(`${LOG_PREFIX}[DEBUG] ${msg}`);
+function log(msg: string) {
+    print(`[Numbis] ${msg}`);
 }
 
 /**
  * Filter windows that should be managed by Numbis.
  */
-export function shouldManage(window: KWinWindow): boolean {
+function shouldManageWindow(window: KWinWindow): boolean {
     if (!window) return false;
 
     // Basic KWin State Checks
-    if (window.fullScreen || window.minimized || (window as any).specialWindow) return false;
+    if (window.fullScreen || window.minimized || window.specialWindow) return false;
 
     // Property Checks
     if (window.modal || !window.resizeable) return false;
@@ -41,13 +35,15 @@ export function shouldManage(window: KWinWindow): boolean {
 /**
  * Get all windows on the current desktop that Numbis should manage.
  */
-export function getManagedWindows(): KWinWindow[] {
-    const allWindows = (workspace as any).windows || workspace.windowList();
+function selectManagedWindows(): KWinWindow[] {
+    const allWindows = workspace.windows || workspace.windowList();
     if (!allWindows) return [];
 
     const currentDesktop = workspace.currentDesktop;
     return allWindows.filter((w: KWinWindow) => {
         const desktopMatch = w.desktops.some(d => d === currentDesktop);
-        return shouldManage(w) && desktopMatch;
+        return shouldManageWindow(w) && desktopMatch;
     });
 }
+
+export { log, shouldManageWindow, selectManagedWindows }

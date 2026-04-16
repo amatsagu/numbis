@@ -1,8 +1,8 @@
 import type {
     KWin,
-    Workspace,
+    Workspace as KWinWorkspace,
     Options,
-    Window,
+    Window as KWinWindowBase,
     VirtualDesktop,
     Output,
     Tile,
@@ -95,4 +95,16 @@ declare global {
     type QtUuid = QUuid;
     type QtTimer = QTimer;
     type QtSignal<T> = Signal<T>;
+
+    // Extended types from kwin-api
+    interface Window extends KWinWindowBase {
+        specialWindow: boolean;
+        resourceClass: string | { toString(): string };
+        resourceName: string | { toString(): string };
+    }
+
+    interface Workspace extends KWinWorkspace {
+        windows: Window[];
+        windowList(): Window[];
+    }
 }

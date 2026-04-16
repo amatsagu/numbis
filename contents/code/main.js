@@ -1,21 +1,33 @@
 "use strict";
 
-// src/constants.ts
-var CONFIG_KEYS = {
-  ENABLED: "Enabled",
-  GAPS: "Gaps",
-  HIDE_TITLEBARS: "HideTitleBars"
-};
-var LOG_PREFIX = "NUMBIS: ";
+// src/config.ts
+function enabled() {
+  return readConfig("Enabled" /* Enabled */, true);
+}
+function gapsUp() {
+  return readConfig("GapsUp" /* GapsTop */, 10);
+}
+function gapsRight() {
+  return readConfig("GapsRight" /* GapsRight */, 10);
+}
+function gapsDown() {
+  return readConfig("GapsDown" /* GapsBottom */, 10);
+}
+function gapsLeft() {
+  return readConfig("GapsLeft" /* GapsLeft */, 10);
+}
+function useSmartGaps() {
+  return readConfig("UseSmartGaps" /* UseSmartGaps */, true);
+}
+function hideAppTitleBars() {
+  return readConfig("HideAppTitleBars" /* HideAppTitleBars */, true);
+}
 
 // src/util.ts
 function log(msg) {
-  print(LOG_PREFIX + msg);
+  print(`[Numbis] ${msg}`);
 }
-function debug(msg) {
-  print(`${LOG_PREFIX}[DEBUG] ${msg}`);
-}
-function shouldManage(window) {
+function shouldManageWindow(window) {
   if (!window) return false;
   if (window.fullScreen || window.minimized || window.specialWindow) return false;
   if (window.modal || !window.resizeable) return false;
@@ -32,105 +44,98 @@ function shouldManage(window) {
   }
   return window.normalWindow;
 }
-function getManagedWindows() {
+function selectManagedWindows() {
   const allWindows = workspace.windows || workspace.windowList();
   if (!allWindows) return [];
   const currentDesktop = workspace.currentDesktop;
   return allWindows.filter((w) => {
     const desktopMatch = w.desktops.some((d) => d === currentDesktop);
-    return shouldManage(w) && desktopMatch;
+    return shouldManageWindow(w) && desktopMatch;
   });
 }
 
-// src/config.ts
-var Config = class {
-  static get isEnabled() {
-    return readConfig(CONFIG_KEYS.ENABLED, true);
+// src/layout.ts
+function applyTiling() {
+  if (!enabled()) {
+    log("Attempted to apply tiling logic but Numbis has been disabled in config. Returning early.");
+    return;
   }
-  static get gaps() {
-    return readConfig(CONFIG_KEYS.GAPS, 10);
+  const gapT = gapsUp();
+  const gapR = gapsRight();
+  const gapB = gapsDown();
+  const gapL = gapsLeft();
+  const hideTitleBars = hideAppTitleBars();
+  const useSmartGaps2 = useSmartGaps();
+  const activeWindow = workspace.activeWindow;
+  const area = activeWindow ? workspace.clientArea(0, activeWindow) : workspace.clientArea(0, workspace.activeScreen);
+  const windows = selectManagedWindows();
+  if (windows.length === 0) return;
+  log(`Applying master layout to ${windows.length} windows!`);
+  if (windows.length === 1) {
+    const win = windows[0];
+    const t = useSmartGaps2 ? gapT : 0;
+    const r = useSmartGaps2 ? gapR : 0;
+    const b = useSmartGaps2 ? gapB : 0;
+    const l = useSmartGaps2 ? gapL : 0;
+    win.frameGeometry = {
+      x: area.x + l,
+      y: area.y + t,
+      width: area.width - (l + r),
+      height: area.height - (t + b)
+    };
+    win.noBorder = hideTitleBars;
+    return;
   }
-  static get hideTitleBars() {
-    return readConfig(CONFIG_KEYS.HIDE_TITLEBARS, true);
-  }
-};
-
-// src/engine/master_layout.ts
-var MasterLayout = class {
-  static apply() {
-    if (!Config.isEnabled) {
-      log("Tiling is disabled.");
-      return;
-    }
-    const gaps = Config.gaps;
-    const hideTitleBars = Config.hideTitleBars;
-    const activeWindow = workspace.activeWindow;
-    const area = activeWindow ? workspace.clientArea(0, activeWindow) : workspace.clientArea(0, workspace.activeScreen);
-    const windows = getManagedWindows();
-    log(`Applying Master Layout: ${windows.length} windows`);
-    if (windows.length === 0) return;
-    if (windows.length === 1) {
-      const win = windows[0];
+  const availableWidth = area.width - (gapL + gapR);
+  const availableHeight = area.height - (gapT + gapB);
+  const masterWidth = availableWidth / 2;
+  const stackWidth = availableWidth - masterWidth;
+  windows.forEach((win, index) => {
+    win.noBorder = hideTitleBars;
+    if (index === 0) {
+      const internalGapH = (gapL + gapR) / 4;
       win.frameGeometry = {
-        x: area.x + gaps,
-        y: area.y + gaps,
-        width: area.width - 2 * gaps,
-        height: area.height - 2 * gaps
+        x: area.x + gapL,
+        y: area.y + gapT,
+        width: masterWidth - internalGapH,
+        height: availableHeight
       };
-      win.noBorder = hideTitleBars;
-      return;
+    } else {
+      const stackCount = windows.length - 1;
+      const stackHeight = availableHeight / stackCount;
+      const internalGapH = (gapL + gapR) / 4;
+      const internalGapV = (gapT + gapB) / 4;
+      win.frameGeometry = {
+        x: area.x + gapL + masterWidth + internalGapH,
+        y: area.y + gapT + (index - 1) * stackHeight + (index === 1 ? 0 : internalGapV),
+        width: stackWidth - internalGapH,
+        height: stackHeight - (index === 1 || index === stackCount ? internalGapV : 2 * internalGapV)
+      };
     }
-    const masterWidth = area.width / 2;
-    const stackWidth = area.width - masterWidth;
-    windows.forEach((win, index) => {
-      win.noBorder = hideTitleBars;
-      if (index === 0) {
-        win.frameGeometry = {
-          x: area.x + gaps,
-          y: area.y + gaps,
-          width: masterWidth - 1.5 * gaps,
-          height: area.height - 2 * gaps
-        };
-      } else {
-        const stackCount = windows.length - 1;
-        const stackHeight = (area.height - gaps) / stackCount;
-        win.frameGeometry = {
-          x: area.x + masterWidth + 0.5 * gaps,
-          y: area.y + gaps + (index - 1) * stackHeight,
-          width: stackWidth - 1.5 * gaps,
-          height: stackHeight - gaps
-        };
-      }
-    });
-  }
-};
+  });
+}
 
 // src/main.ts
-log("INITIALIZING...");
-workspace.windowAdded.connect((window) => {
-  debug(`Event: Window Added: "${window.caption}"`);
-  if (shouldManage(window)) {
-    MasterLayout.apply();
-  }
-});
-workspace.windowRemoved.connect((window) => {
-  debug(`Event: Window Removed: "${window.caption}"`);
-  if (shouldManage(window)) {
-    MasterLayout.apply();
-  }
-});
-workspace.windowActivated.connect((window) => {
-  if (window && shouldManage(window)) {
-    debug(`Event: Window Activated: "${window.caption}"`);
-  }
-});
-workspace.currentDesktopChanged.connect(() => {
-  log("Event: Desktop Changed");
-  MasterLayout.apply();
-});
-registerShortcut("NumbisRetile", "Numbis: Force Retile", "Meta+Alt+R", () => {
-  log("Shortcut: Force Retile Triggered");
-  MasterLayout.apply();
-});
-MasterLayout.apply();
-log("INITIALIZED");
+function init() {
+  log("Requested initialization. Preparing...");
+  workspace.windowAdded.connect((window) => {
+    log(`[Event] Detected creation of "${window.caption}" window.`);
+    if (shouldManageWindow(window)) applyTiling();
+  });
+  workspace.windowRemoved.connect((window) => {
+    log(`[Event] Detected removal of "${window.caption}" window.`);
+    if (shouldManageWindow(window)) applyTiling();
+  });
+  workspace.windowActivated.connect((window) => {
+    if (window && shouldManageWindow(window)) {
+      log(`[Event] Detected activation/focus of "${window.caption}" window.`);
+    }
+  });
+  workspace.currentDesktopChanged.connect(() => {
+    log("[Event] Detected change of desktop view.");
+    applyTiling();
+  });
+  applyTiling();
+  log("Successfully started Numbis tiling window manager script.");
+}
+init();

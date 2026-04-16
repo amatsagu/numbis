@@ -1,37 +1,32 @@
-import { log, debug, shouldManage } from "./util";
-import { MasterLayout } from "./engine/master_layout";
+import { applyTiling } from "./layout";
+import { log, shouldManageWindow } from "./util";
 
-log("INITIALIZING...");
+function init() {
+    log("Requested initialization. Preparing...")
 
-workspace.windowAdded.connect((window: KWinWindow) => {
-    debug(`Event: Window Added: "${window.caption}"`);
-    if (shouldManage(window)) {
-        MasterLayout.apply();
-    }
-});
+    workspace.windowAdded.connect((window: KWinWindow) => {
+        log(`[Event] Detected creation of \"${window.caption}\" window.`)
+        if (shouldManageWindow(window)) applyTiling();
+    });
 
-workspace.windowRemoved.connect((window: KWinWindow) => {
-    debug(`Event: Window Removed: "${window.caption}"`);
-    if (shouldManage(window)) {
-        MasterLayout.apply();
-    }
-});
+    workspace.windowRemoved.connect((window: KWinWindow) => {
+        log(`[Event] Detected removal of \"${window.caption}\" window.`)
+        if (shouldManageWindow(window)) applyTiling();
+    });
 
-workspace.windowActivated.connect((window: KWinWindow | null) => {
-    if (window && shouldManage(window)) {
-        debug(`Event: Window Activated: "${window.caption}"`);
-    }
-});
+    workspace.windowActivated.connect((window: KWinWindow | null) => {
+        if (window && shouldManageWindow(window)) {
+            log(`[Event] Detected activation/focus of \"${window.caption}\" window.`)
+        }
+    });
 
-workspace.currentDesktopChanged.connect(() => {
-    log("Event: Desktop Changed");
-    MasterLayout.apply();
-});
+    workspace.currentDesktopChanged.connect(() => {
+        log("[Event] Detected change of desktop view.")
+        applyTiling(); // force reload
+    });
 
-registerShortcut("NumbisRetile", "Numbis: Force Retile", "Meta+Alt+R", () => {
-    log("Shortcut: Force Retile Triggered");
-    MasterLayout.apply();
-});
+    applyTiling(); // force first reload after enabling script
+    log("Successfully started Numbis tiling window manager script.")
+}
 
-MasterLayout.apply();
-log("INITIALIZED");
+init();
