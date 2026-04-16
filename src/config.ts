@@ -32,13 +32,23 @@ function windowFocusMode(): WindowFocusDecoration {
     return readConfig(ConfigKey.WindowFocusMode, WindowFocusDecoration.DynamicBorder);
 }
 
+function masterKey(): string {
+    return readConfig(ConfigKey.MasterKey, "Shift");
+}
+
+function terminalEmulator(): string {
+    return readConfig(ConfigKey.TerminalEmulator, "alacritty");
+}
+
 export {
-    enabled as Enabled,
-    gapsUp as GapsUp,
-    gapsRight as GapsRight,
-    gapsDown as GapsDown,
-    gapsLeft as GapsLeft,
-    useSmartGaps as UseSmartGaps,
-    hideAppTitleBars as HideAppTitleBars,
-    windowFocusMode as WindowFocusMode,
+    enabled,
+    gapsUp,
+    gapsRight,
+    gapsDown,
+    gapsLeft,
+    useSmartGaps,
+    hideAppTitleBars,
+    windowFocusMode,
+    masterKey,
+    terminalEmulator,
 };

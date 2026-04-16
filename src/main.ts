@@ -1,8 +1,11 @@
 import { applyTiling } from "./layout";
-import { log, shouldManageWindow } from "./util";
+import { initShortcuts } from "./shortcuts";
+import { log, shouldManageWindow, clearWindowState } from "./util";
 
 function init() {
     log("Requested initialization. Preparing...")
+
+    initShortcuts();
 
     workspace.windowAdded.connect((window: KWinWindow) => {
         log(`[Event] Detected creation of \"${window.caption}\" window.`)
@@ -11,7 +14,8 @@ function init() {
 
     workspace.windowRemoved.connect((window: KWinWindow) => {
         log(`[Event] Detected removal of \"${window.caption}\" window.`)
-        if (shouldManageWindow(window)) applyTiling();
+        clearWindowState(window);
+        applyTiling();
     });
 
     workspace.windowActivated.connect((window: KWinWindow | null) => {

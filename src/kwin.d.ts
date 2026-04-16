@@ -99,8 +99,6 @@ declare global {
     // Extended types from kwin-api
     interface Window extends KWinWindowBase {
         specialWindow: boolean;
-        resourceClass: string | { toString(): string };
-        resourceName: string | { toString(): string };
     }
 
     interface Workspace extends KWinWorkspace {

@@ -9,6 +9,9 @@ enum ConfigKey {
 
     HideAppTitleBars = "HideAppTitleBars",
     WindowFocusMode = "WindowFocusMode", // 0 = disabled, 1 = dynamic border (window decoration), 2 = shrink inactive windows.
+
+    MasterKey = "MasterKey",
+    TerminalEmulator = "TerminalEmulator",
 }
 
 enum WindowFocusDecoration {
@@ -29,11 +32,6 @@ enum KeyShortcut {
     AltMoveRight,
     AltMoveDown,
     AltMoveLeft,
-
-    // ShiftLeft,
-    // ShiftRight,
-    // ShiftUp,
-    // ShiftDown,
     
     /* Bindings to swap window position on screen. */
     SwapUp,
@@ -44,6 +42,11 @@ enum KeyShortcut {
     /* Special bindings to apply custom rules to focused window. */
     ToggleFloat,
     ToggleFullScreen,
+
+    /* Application shortcuts */
+    CloseWindow,
+    LaunchFileExplorer,
+    LaunchTerminal,
 }
 
 export { ConfigKey, WindowFocusDecoration, KeyShortcut };

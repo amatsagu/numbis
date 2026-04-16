@@ -16,5 +16,13 @@
             <default>10</default>
             <label>Gaps between windows</label>
         </entry>
+        <entry name="MasterKey" type="String">
+            <default>Shift</default>
+            <label>Master Shortcut Key (e.g. Meta, Shift, Alt, Ctrl)</label>
+        </entry>
+        <entry name="TerminalEmulator" type="String">
+            <default>alacritty</default>
+            <label>Terminal Emulator Command</label>
+        </entry>
     </group>
 </kcfg>

@@ -37,5 +37,29 @@ KCM.ConfigModule {
                 onValueChanged: kcfg_Gaps = value
             }
         }
+
+        RowLayout {
+            Label {
+                text: i18n("Master Key:")
+            }
+            TextField {
+                id: masterKeyField
+                text: kcfg_MasterKey
+                onTextChanged: kcfg_MasterKey = text
+                placeholderText: "e.g. Shift, Meta, Alt"
+            }
+        }
+
+        RowLayout {
+            Label {
+                text: i18n("Terminal:")
+            }
+            TextField {
+                id: terminalField
+                text: kcfg_TerminalEmulator
+                onTextChanged: kcfg_TerminalEmulator = text
+                placeholderText: "e.g. alacritty"
+            }
+        }
     }
 }

@@ -1,3 +1,6 @@
+const floatingWindows = new Set<KWinWindow>();
+const fullscreenWindows = new Set<KWinWindow>();
+
 function log(msg: string) {
     print(`[Numbis] ${msg}`);
 }
@@ -19,8 +22,13 @@ function shouldManageWindow(window: KWinWindow): boolean {
         return false;
     }
 
-    const resClass = window.resourceClass.toString().toLowerCase();
-    const resName = window.resourceName.toString().toLowerCase();
+    // Check internal state tracking
+    if (floatingWindows.has(window) || fullscreenWindows.has(window)) {
+        return false;
+    }
+
+    const resClass = String(window.resourceClass).toLowerCase();
+    const resName = String(window.resourceName).toLowerCase();
 
     const ignoredClasses = ["plasmashell", "plasma-desktop", "krunner", "kded6"];
     for (const clsName of ignoredClasses) {
@@ -46,4 +54,16 @@ function selectManagedWindows(): KWinWindow[] {
     });
 }
 
-export { log, shouldManageWindow, selectManagedWindows }
+function clearWindowState(window: KWinWindow) {
+    floatingWindows.delete(window);
+    fullscreenWindows.delete(window);
+}
+
+export { 
+    log, 
+    shouldManageWindow, 
+    selectManagedWindows, 
+    floatingWindows, 
+    fullscreenWindows,
+    clearWindowState
+}
