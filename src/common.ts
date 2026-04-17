@@ -5,19 +5,11 @@ enum ConfigKey {
     GapsRight = "GapsRight",
     GapsBottom = "GapsDown",
     GapsLeft = "GapsLeft",
-    UseSmartGaps = "UseSmartGaps", // 0 = disabled, 1 = enabled; whether to use gaps when there's only single window or in full screen mode.
-
-    HideAppTitleBars = "HideAppTitleBars",
-    WindowFocusMode = "WindowFocusMode", // 0 = disabled, 1 = dynamic border (window decoration), 2 = shrink inactive windows.
+    UseSmartGaps = "UseSmartGaps",
+    GapsThreshold = "GapsThreshold",
 
     MasterKey = "MasterKey",
     TerminalEmulator = "TerminalEmulator",
-}
-
-enum WindowFocusDecoration {
-    NoDecoration,
-    DynamicBorder,
-    ShrinkInactive,
 }
 
 enum KeyShortcut {
@@ -49,4 +41,4 @@ enum KeyShortcut {
     LaunchTerminal,
 }
 
-export { ConfigKey, WindowFocusDecoration, KeyShortcut };
+export { ConfigKey, KeyShortcut };

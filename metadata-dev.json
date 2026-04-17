@@ -16,6 +16,9 @@
         "EnabledByDefault": true
     },
     "X-KWin-Video-Wall": false,
+    "X-KDE-ConfigModuleID": "numbis-dev",
+    "X-KDE-PluginKeyword": "numbis-dev",
+    "KCMConfigCustom": "ui/config.qml",
     "X-Plasma-API": "javascript",
     "X-Plasma-MainScript": "code/main.js"
 }

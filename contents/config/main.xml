@@ -8,17 +8,41 @@
             <default>true</default>
             <label>Enable Tiling</label>
         </entry>
-        <entry name="HideTitleBars" type="Bool">
-            <default>true</default>
-            <label>Hide Title Bars</label>
-        </entry>
-        <entry name="Gaps" type="Int">
+        <entry name="GapsUp" type="Int">
             <default>10</default>
-            <label>Gaps between windows</label>
+            <label>Top Gap</label>
+        </entry>
+        <entry name="GapsRight" type="Int">
+            <default>10</default>
+            <label>Right Gap</label>
+        </entry>
+        <entry name="GapsDown" type="Int">
+            <default>10</default>
+            <label>Bottom Gap</label>
+        </entry>
+        <entry name="GapsLeft" type="Int">
+            <default>10</default>
+            <label>Left Gap</label>
+        </entry>
+        <entry name="UseSmartGaps" type="Bool">
+            <default>true</default>
+            <label>Use Smart Gaps (gaps for single window)</label>
+        </entry>
+        <entry name="GapsThreshold" type="Double">
+            <default>0.9</default>
+            <label>Ignore gaps when window takes more than % of screen</label>
+        </entry>
+        <entry name="HideAppTitleBars" type="Bool">
+            <default>true</default>
+            <label>Hide App Title Bars</label>
+        </entry>
+        <entry name="WindowFocusMode" type="Int">
+            <default>1</default>
+            <label>Focus Decoration Mode (0=None, 1=Border, 2=Shrink)</label>
         </entry>
         <entry name="MasterKey" type="String">
-            <default>Shift</default>
-            <label>Master Shortcut Key (e.g. Meta, Shift, Alt, Ctrl)</label>
+            <default>Meta</default>
+            <label>Master Shortcut Key</label>
         </entry>
         <entry name="TerminalEmulator" type="String">
             <default>alacritty</default>

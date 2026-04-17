@@ -34,6 +34,11 @@ declare global {
      * Global KWin object
      * Provides access to KWin-specific functions like registerShortcut, callDBus, etc.
      */
+    interface KWin {
+        registerShortcut(name: string, text: string, keySequence: string, callback: () => void): void;
+        readConfig<T>(property: string, defaultValue: T): T;
+        callDBus(service: string, path: string, interfaceName: string, method: string, ...args: any[]): void;
+    }
     const KWin: KWin;
 
     /**
@@ -99,6 +104,15 @@ declare global {
     // Extended types from kwin-api
     interface Window extends KWinWindowBase {
         specialWindow: boolean;
+        quickTileMode: number;
+        moveResized: boolean;
+        minSize: QtSize;
+        minimumSize: QtSize;
+        minimumWidth: number;
+        minimumHeight: number;
+        quickTileModeChanged: QtSignal<void>;
+        moveResizedChanged: QtSignal<void>;
+        desktopsChanged: QtSignal<void>;
     }
 
     interface Workspace extends KWinWorkspace {

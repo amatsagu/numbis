@@ -1,4 +1,4 @@
-import { ConfigKey, WindowFocusDecoration } from "./common";
+import { ConfigKey } from "./common";
 
 function enabled(): boolean {
     return readConfig(ConfigKey.Enabled, true);
@@ -24,16 +24,12 @@ function useSmartGaps(): boolean {
     return readConfig(ConfigKey.UseSmartGaps, true);
 }
 
-function hideAppTitleBars(): boolean {
-    return readConfig(ConfigKey.HideAppTitleBars, true);
-}
-
-function windowFocusMode(): WindowFocusDecoration {
-    return readConfig(ConfigKey.WindowFocusMode, WindowFocusDecoration.DynamicBorder);
+function gapsThreshold(): number {
+    return readConfig(ConfigKey.GapsThreshold, 0.9);
 }
 
 function masterKey(): string {
-    return readConfig(ConfigKey.MasterKey, "Shift");
+    return readConfig(ConfigKey.MasterKey, "Meta");
 }
 
 function terminalEmulator(): string {
@@ -47,8 +43,7 @@ export {
     gapsDown,
     gapsLeft,
     useSmartGaps,
-    hideAppTitleBars,
-    windowFocusMode,
+    gapsThreshold,
     masterKey,
     terminalEmulator,
 };

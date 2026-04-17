@@ -4,12 +4,15 @@
   "description": "A tiling window manager script for KWin (Plasma 6).",
   "main": "contents/code/main.js",
   "scripts": {
-    "build": "esbuild src/main.ts --bundle --outfile=contents/code/main.js --format=cjs --platform=neutral --external:kwin-api",
-    "watch": "npm run build -- --watch",
-    "install-script": "kpackagetool6 --type=KWin/Script -i .",
-    "upgrade-script": "kpackagetool6 --type=KWin/Script -u .",
-    "uninstall-script": "kpackagetool6 --type=KWin/Script -r numbis",
-    "test-reload": "busctl --user call org.kde.KWin /Scripting org.kde.kwin.Scripting unloadScript string:numbis && busctl --user call org.kde.KWin /Scripting org.kde.kwin.Scripting loadScript string:numbis"
+    "build:release": "npm run build:internal && cp metadata-release.json metadata.json",
+    "build:dev": "npm run build:internal && cp metadata-dev.json metadata.json",
+    "build:internal": "esbuild src/main.ts --bundle --outfile=contents/code/main.js --format=cjs --platform=neutral --external:kwin-api --target=es2017",
+    "install": "npm run build:release && kpackagetool6 --type=KWin/Script -i .",
+    "uninstall": "qdbus6 org.kde.KWin /Scripting unloadScript numbis || true; kpackagetool6 --type=KWin/Script -r numbis || true",
+    "upgrade": "npm run build:release && kpackagetool6 --type=KWin/Script -u .",
+    "dev-test": "npm run uninstall:all && npm run build:dev && kpackagetool6 --type=KWin/Script -i . && kwriteconfig6 --file kwinrc --group Plugins --key numbis-devEnabled true && qdbus6 org.kde.KWin /KWin reconfigure && journalctl -f QT_CATEGORY=js QT_CATEGORY=kwin_scripting && npm run uninstall:all",
+    "uninstall:all": "qdbus6 org.kde.KWin /Scripting unloadScript numbis || true; qdbus6 org.kde.KWin /Scripting unloadScript numbis-dev || true; kpackagetool6 --type=KWin/Script -r numbis || true; kpackagetool6 --type=KWin/Script -r numbis-dev || true; rm -rf ~/.local/share/kwin/scripts/numbis* || true; kbuildsycoca6 --noincremental || true",
+    "clean": "rm -f contents/code/*.js metadata.json"
   },
   "devDependencies": {
     "esbuild": "^0.28.0",

@@ -9,56 +9,65 @@ KCM.ConfigModule {
     ColumnLayout {
         anchors.left: parent.left
         anchors.right: parent.right
-        spacing: 10
+        spacing: 15
 
         CheckBox {
-            id: enabledCheckBox
             text: i18n("Enable Numbis Tiling")
             checked: kcfg_Enabled
             onCheckedChanged: kcfg_Enabled = checked
         }
 
-        CheckBox {
-            id: hideTitleBarsCheckBox
-            text: i18n("Hide Title Bars (Hyprland style)")
-            checked: kcfg_HideTitleBars
-            onCheckedChanged: kcfg_HideTitleBars = checked
+        GroupBox {
+            title: i18n("Gaps")
+            Layout.fillWidth: true
+            ColumnLayout {
+                CheckBox {
+                    text: i18n("Use Smart Gaps (gaps for single window)")
+                    checked: kcfg_UseSmartGaps
+                    onCheckedChanged: kcfg_UseSmartGaps = checked
+                }
+                RowLayout {
+                    Label { text: i18n("Gaps Threshold (ignore gaps if window > % of screen):") }
+                    SpinBox {
+                        value: kcfg_GapsThreshold * 100
+                        onValueChanged: kcfg_GapsThreshold = value / 100
+                        from: 0; to: 100
+                        stepSize: 5
+                    }
+                }
+                GridLayout {
+                    columns: 4
+                    Label { text: i18n("Top:") }
+                    SpinBox { value: kcfg_GapsUp; onValueChanged: kcfg_GapsUp = value; from: 0; to: 100 }
+                    Label { text: i18n("Right:") }
+                    SpinBox { value: kcfg_GapsRight; onValueChanged: kcfg_GapsRight = value; from: 0; to: 100 }
+                    Label { text: i18n("Bottom:") }
+                    SpinBox { value: kcfg_GapsDown; onValueChanged: kcfg_GapsDown = value; from: 0; to: 100 }
+                    Label { text: i18n("Left:") }
+                    SpinBox { value: kcfg_GapsLeft; onValueChanged: kcfg_GapsLeft = value; from: 0; to: 100 }
+                }
+            }
         }
 
-        RowLayout {
-            Label {
-                text: i18n("Gaps (px):")
-            }
-            SpinBox {
-                id: gapsSpinBox
-                from: 0
-                to: 100
-                value: kcfg_Gaps
-                onValueChanged: kcfg_Gaps = value
-            }
-        }
-
-        RowLayout {
-            Label {
-                text: i18n("Master Key:")
-            }
-            TextField {
-                id: masterKeyField
-                text: kcfg_MasterKey
-                onTextChanged: kcfg_MasterKey = text
-                placeholderText: "e.g. Shift, Meta, Alt"
-            }
-        }
-
-        RowLayout {
-            Label {
-                text: i18n("Terminal:")
-            }
-            TextField {
-                id: terminalField
-                text: kcfg_TerminalEmulator
-                onTextChanged: kcfg_TerminalEmulator = text
-                placeholderText: "e.g. alacritty"
+        GroupBox {
+            title: i18n("System")
+            Layout.fillWidth: true
+            ColumnLayout {
+                RowLayout {
+                    Label { text: i18n("Master Shortcut Key:") }
+                    TextField {
+                        text: kcfg_MasterKey
+                        onTextChanged: kcfg_MasterKey = text
+                        placeholderText: "Shift, Meta, Alt"
+                    }
+                }
+                RowLayout {
+                    Label { text: i18n("Terminal Emulator:") }
+                    TextField {
+                        text: kcfg_TerminalEmulator
+                        onTextChanged: kcfg_TerminalEmulator = text
+                    }
+                }
             }
         }
     }
